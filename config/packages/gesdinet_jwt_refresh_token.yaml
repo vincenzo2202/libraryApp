@@ -1,0 +1,5 @@
+gesdinet_jwt_refresh_token:
+    ttl: 2592000          # Tiempo de vida del refresh token en segundos (30 días en este ejemplo)
+    ttl_update: true      # Si el refresh token debería actualizarse al momento de su uso
+    user_provider: app_user_provider  # El proveedor de usuarios que estás usando en tu configuración
+    refresh_token_entity: App\Entity\RefreshToken # Entidad que manejará los tokens de refresco
