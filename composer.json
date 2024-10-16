@@ -13,6 +13,7 @@
         "gesdinet/jwt-refresh-token-bundle": "*",
         "jms/serializer": "^3.30",
         "lexik/jwt-authentication-bundle": "^3.1",
+        "nelmio/cors-bundle": "^2.5",
         "symfony/console": "7.1.*",
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
