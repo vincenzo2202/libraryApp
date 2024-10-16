@@ -75,10 +75,6 @@ class CanAccessAuthenticator extends AbstractAuthenticator
                     throw new CustomAuthenticationException('El usuario o la contraseña no son validos.');
                 }
 
-                if ($user->isBloqued()) {
-                    throw new CustomAuthenticationException('Tu cuenta ha sido bloqueada.');
-                }
-
 
                 return $user;
             })
@@ -101,7 +97,7 @@ class CanAccessAuthenticator extends AbstractAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         //comprobar que el usuario está activo
-        if ($token->getUser()->isBloqued()) {
+        if ($token->getUser()->isValidated() !== true) {
             return new JsonResponse(['status' => 403, 'message' => 'No tienes permisos para acceder a este recurso. Por favor, contacta con el administrador si crees que esto es un error.'], 403);
         }
         return $this->successHandler->onAuthenticationSuccess($request, $token);

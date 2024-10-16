@@ -36,6 +36,7 @@ class AuthController extends ApiController
         $user->setDeleted(false);
         $password = $passwordHasher->hashPassword($user, $request->get('password'));
         $user->setPassword($password);
+        $user->setRoles(['ROLE_USER']);
 
         // uso el imageUtilities para subir la imagen
         $imageFile = $request->files->get('profile'); // Asegúrate de que el campo en el formulario sea 'profile'
