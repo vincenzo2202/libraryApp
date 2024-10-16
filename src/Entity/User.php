@@ -3,8 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
+enum Status: string
+{
+    case available = 'available';
+    case borrowed = 'borrowed';
+}
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -41,6 +49,24 @@ class User implements PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $isDeleted = null;
+
+    /**
+     * @var Collection<int, Publisher>
+     */
+    #[ORM\OneToMany(targetEntity: Publisher::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $publishers;
+
+    /**
+     * @var Collection<int, Purchase>
+     */
+    #[ORM\OneToMany(targetEntity: Purchase::class, mappedBy: 'user')]
+    private Collection $purchases;
+
+    public function __construct()
+    {
+        $this->publishers = new ArrayCollection();
+        $this->purchases = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -168,6 +194,66 @@ class User implements PasswordAuthenticatedUserInterface
     public function setDeleted(bool $isDeleted): static
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Publisher>
+     */
+    public function getPublishers(): Collection
+    {
+        return $this->publishers;
+    }
+
+    public function addPublisher(Publisher $publisher): static
+    {
+        if (!$this->publishers->contains($publisher)) {
+            $this->publishers->add($publisher);
+            $publisher->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePublisher(Publisher $publisher): static
+    {
+        if ($this->publishers->removeElement($publisher)) {
+            // set the owning side to null (unless already changed)
+            if ($publisher->getUser() === $this) {
+                $publisher->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Purchase>
+     */
+    public function getPurchases(): Collection
+    {
+        return $this->purchases;
+    }
+
+    public function addPurchase(Purchase $purchase): static
+    {
+        if (!$this->purchases->contains($purchase)) {
+            $this->purchases->add($purchase);
+            $purchase->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePurchase(Purchase $purchase): static
+    {
+        if ($this->purchases->removeElement($purchase)) {
+            // set the owning side to null (unless already changed)
+            if ($purchase->getUser() === $this) {
+                $purchase->setUser(null);
+            }
+        }
 
         return $this;
     }
