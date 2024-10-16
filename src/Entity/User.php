@@ -5,11 +5,10 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,22 +19,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $surname = null;
+    private ?string $firstSurname = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $secondSurname = null;
 
     #[ORM\Column(length: 255)]
     private ?string $username = null;
 
-    #[ORM\Column]
-    private ?bool $isBloqued = null;
-
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(type: 'json')]
-    private array $roles = [];
-
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $profile = null;
+    private ?string $profileImage = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $creationDate = null;
+
+    #[ORM\Column]
+    private ?bool $isValidated = null;
+
+    #[ORM\Column]
+    private ?bool $isDeleted = null;
 
     public function getId(): ?int
     {
@@ -54,14 +59,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSurname(): ?string
+    public function getFirstSurname(): ?string
     {
-        return $this->surname;
+        return $this->firstSurname;
     }
 
-    public function setSurname(string $surname): static
+    public function setFirstSurname(string $firstSurname): static
     {
-        $this->surname = $surname;
+        $this->firstSurname = $firstSurname;
 
         return $this;
     }
@@ -78,18 +83,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isBloqued(): ?bool
-    {
-        return $this->isBloqued;
-    }
-
-    public function setBloqued(bool $isBloqued): static
-    {
-        $this->isBloqued = $isBloqued;
-
-        return $this;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;
@@ -98,33 +91,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
-        return $this;
-    }
-
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        if (!in_array('ROLE_USER', $roles)) {
-            $roles[] = 'ROLE_USER';
-        }
-
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function addRole(string $role): self
-    {
-        $this->roles[] = $role;
-        $this->roles = array_unique($this->roles);
 
         return $this;
     }
@@ -146,14 +112,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
-    public function getProfile(): ?string
+    public function getProfileImage(): ?string
     {
-        return $this->profile;
+        return $this->profileImage;
     }
 
-    public function setProfile(?string $profile): static
+    public function setProfileImage(?string $profileImage): static
     {
-        $this->profile = $profile;
+        $this->profileImage = $profileImage;
+
+        return $this;
+    }
+
+    public function getSecondSurname(): ?string
+    {
+        return $this->secondSurname;
+    }
+
+    public function setSecondSurname(?string $secondSurname): static
+    {
+        $this->secondSurname = $secondSurname;
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?string
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(string $creationDate): static
+    {
+        $this->creationDate = $creationDate;
+
+        return $this;
+    }
+
+    public function isValidated(): ?bool
+    {
+        return $this->isValidated;
+    }
+
+    public function setValidated(bool $isValidated): static
+    {
+        $this->isValidated = $isValidated;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setDeleted(bool $isDeleted): static
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }
