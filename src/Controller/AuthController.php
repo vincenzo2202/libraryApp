@@ -29,11 +29,13 @@ class AuthController extends ApiController
         $user = new User();
         $user->setUsername($request->get('username'));
         $user->setName($request->get('name'));
-        $user->setSurname($request->get('surname'));
+        $user->setFirstSurname($request->get('firstSurname'));
+        $user->setSecondSurname($request->get('secondSurname'));
+        $user->setCreationDate(date('Y-m-d H:i:s'));
+        $user->setValidated(true);
+        $user->setDeleted(false);
         $password = $passwordHasher->hashPassword($user, $request->get('password'));
         $user->setPassword($password);
-        $user->setBloqued(false);
-        $user->setRoles(['ROLE_USER']);
 
         // uso el imageUtilities para subir la imagen
         $imageFile = $request->files->get('profile'); // Asegúrate de que el campo en el formulario sea 'profile'
@@ -41,7 +43,7 @@ class AuthController extends ApiController
         if ($imageFile) {
             // Llama al método uploadImage del servicio ImageUtilities
             $imagePath = $imageUtilities->uploadImage($imageFile);
-            $user->setProfile($imagePath); // Suponiendo que setProfile espera una ruta o URL
+            $user->setProfileImage($imagePath); // Suponiendo que setProfile espera una ruta o URL
         }
 
         $em->persist($user);
