@@ -12,8 +12,7 @@ class UserManagerService
     public function __construct(
         private UserRepository $userRE,
         private EntityManagerInterface $em
-    ) {
-    }
+    ) {}
 
     public function selector()
     {
@@ -30,8 +29,13 @@ class UserManagerService
 
     public function create(Request $request): User
     {
-        $request = json_decode($request->getContent(), true);
         $user = $this->userRE->writeFromRequest($request);
+
+        try {
+            $this->em->flush();
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
 
         return $user;
     }

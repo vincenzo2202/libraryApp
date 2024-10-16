@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ImageUtilities;
+use App\Service\UserManagerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,33 +23,13 @@ class AuthController extends ApiController
 {
     // register
     #[Route('/register', name: 'api_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em, ImageUtilities $imageUtilities): Response
+    public function register(Request $request, UserManagerService $userManagerSE): Response
     {
         $request = $this->transformJsonBody($request);
 
-        $user = new User();
-        $user->setUsername($request->get('username'));
-        $user->setName($request->get('name'));
-        $user->setFirstSurname($request->get('firstSurname'));
-        $user->setSecondSurname($request->get('secondSurname'));
-        $user->setCreationDate(date('Y-m-d H:i:s'));
-        $user->setValidated(true);
-        $user->setDeleted(false);
-        $password = $passwordHasher->hashPassword($user, $request->get('password'));
-        $user->setPassword($password);
-        $user->setRoles(['ROLE_USER']);
+        $this->allNeededParametersPresent($request);
 
-        // uso el imageUtilities para subir la imagen
-        $imageFile = $request->files->get('profile'); // Asegúrate de que el campo en el formulario sea 'profile'
-
-        if ($imageFile) {
-            // Llama al método uploadImage del servicio ImageUtilities
-            $imagePath = $imageUtilities->uploadImage($imageFile);
-            $user->setProfileImage($imagePath); // Suponiendo que setProfile espera una ruta o URL
-        }
-
-        $em->persist($user);
-        $em->flush();
+        $userManagerSE->create($request);
 
         return $this->respondWithSuccess('Usuario creado correctamente');
     }
@@ -58,5 +39,33 @@ class AuthController extends ApiController
     {
         $user = $userRepository->findOneBy(array('username' => $user->getUserIdentifier()));
         return new JsonResponse(['token' => $JWTManager->create($user)]);
+    }
+
+    /**
+     *
+     * Checks if all needed parameters are present or not
+     *
+     * @param mixed $clienteJson
+     *
+     * @return [type]
+     */
+    private function allNeededParametersPresent($clienteJson): string
+    {
+        $parameters = ['name', 'firstSurname', 'username', 'password'];
+
+        foreach ($parameters as $param) {
+            if (
+                $clienteJson->get($param) === null || $clienteJson->get($param) === ''
+            ) {
+                return $param;
+            }
+
+            if ($param !== '') {
+                return $this->respondValidationError('Falta el parámetro: ' . $param);
+            }
+        }
+
+
+        return '';
     }
 }
