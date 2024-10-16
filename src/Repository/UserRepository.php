@@ -100,4 +100,48 @@ class UserRepository extends ServiceEntityRepository
 
         return $user;
     }
+
+    public function list($request)
+    {
+        $genericFilter = $request->get('genericFilter');
+        $orderBy = $request->get('orderBy');
+
+        $nPage = $request->get('nPage');
+        $nReturns = $request->get('nReturns');
+
+        $query = $this->obtainUserQuery();
+
+        if ($genericFilter) {
+            $query->andWhere('U.name LIKE :genericFilter')
+                ->orWhere('U.firstSurname LIKE :genericFilter')
+                ->orWhere('U.secondSurname LIKE :genericFilter')
+                ->orWhere('U.username LIKE :genericFilter')
+                ->setParameter('genericFilter', '%' . $genericFilter . '%');
+        }
+
+
+        if (strtoupper($orderBy) === 'ASC') {
+            $query->orderBy('U.id', 'ASC');
+        } else if (strtoupper($orderBy) === 'DESC') {
+            $query->orderBy('U.id', 'DESC');
+        } else {
+            $query->orderBy('U.id', 'DESC');
+        }
+
+        $data = $query->getQuery()->getResult();
+
+        $start = ($nPage - 1) * $nReturns;
+        $paginatedData = array_slice($data, $start, $nReturns);
+        $total = count($data);
+
+        return [$total, $paginatedData];
+    }
+
+    public function obtainUserQuery()
+    {
+        $query = $this->createQueryBuilder('U');
+
+
+        return $query;
+    }
 }

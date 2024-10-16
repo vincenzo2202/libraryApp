@@ -45,4 +45,21 @@ class UserManagerService
         $user = $this->userRE->findOrFail($id);
         $this->userRE->remove($user);
     }
+
+    public function getList($request): array
+    {
+        [$total, $data] = $this->userRE->list($request);
+
+        if (empty($data)) {
+            return [
+                'total' => $total,
+                'data' => []
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'data' => $data
+        ];
+    }
 }
