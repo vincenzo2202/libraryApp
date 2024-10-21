@@ -30,7 +30,7 @@ class Category
     /**
      * @var Collection<int, Magazine>
      */
-    #[ORM\ManyToMany(targetEntity: Magazine::class, mappedBy: 'Categories')]
+    #[ORM\ManyToMany(targetEntity: Magazine::class, mappedBy: 'categories')]
     private Collection $magazines;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]

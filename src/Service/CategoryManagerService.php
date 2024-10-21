@@ -86,10 +86,20 @@ class CategoryManagerService
         return $category;
     }
 
-    public function delete(int $id): void
+    public function delete($ids): void
     {
-        $category = $this->categoryRE->findOrFail($id);
-        $this->categoryRE->remove($category);
+        $toDelete = [];
+        foreach ($ids as $id) {
+            $category = $this->categoryRE->findOrFail($id);
+            if ($category->getUser()->getId() !== $this->tokenUserId()) {
+                continue;
+            }
+            $toDelete[] = $category;
+        }
+
+        foreach ($toDelete as $id) {
+            $this->categoryRE->remove($category);
+        }
     }
 
     public function tokenUserId(): int

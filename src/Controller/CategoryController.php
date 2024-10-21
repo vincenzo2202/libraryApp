@@ -53,7 +53,6 @@ class CategoryController extends ApiController
         return $this->respondWithSuccess('Se ha creado la categoría correctamente');
     }
 
-    // edit category
     #[Route('/category/{id<\d+>}', name: 'app_category_edit', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]
     public function editCategory(int $id, Request $request, CategoryManagerService $categoryManagerSE): Response
@@ -63,6 +62,24 @@ class CategoryController extends ApiController
         $categoryManagerSE->edit($id, $request);
 
         return $this->respondWithSuccess('Se ha editado la categoría correctamente');
+    }
+
+    #[Route('/category', name: 'app_category_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deleteCategory(Request $request, CategoryManagerService $categoryManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $ids = $request->get('ids');
+
+        $categoryManagerSE->delete($ids);
+
+        // si el array solo tiene un elemento, se devuelve un string
+        if (count($ids) === 1) {
+            return $this->respondWithSuccess('Se ha eliminado la categoría correctamente');
+        }
+
+        return $this->respondWithSuccess('Se han eliminado las categorías correctamente');
     }
 
 
