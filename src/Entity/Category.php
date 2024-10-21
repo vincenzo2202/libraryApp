@@ -33,6 +33,9 @@ class Category
     #[ORM\ManyToMany(targetEntity: Magazine::class, mappedBy: 'Categories')]
     private Collection $magazines;
 
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->books = new ArrayCollection();
@@ -118,6 +121,18 @@ class Category
         if ($this->magazines->removeElement($magazine)) {
             $magazine->removeCategory($this);
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
