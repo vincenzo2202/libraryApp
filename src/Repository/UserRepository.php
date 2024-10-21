@@ -129,11 +129,9 @@ class UserRepository extends ServiceEntityRepository
 
         $data = $query->getQuery()->getResult();
 
-        $start = ($nPage - 1) * $nReturns;
-        $paginatedData = array_slice($data, $start, $nReturns);
-        $total = count($data);
+        $dataPaginated = $this->paginateQuery($data, $request);
 
-        return [$total, $paginatedData];
+        return $dataPaginated;
     }
 
     public function obtainUserQuery()
@@ -144,5 +142,20 @@ class UserRepository extends ServiceEntityRepository
             ->andWhere('U.isValidated = true');
 
         return $query;
+    }
+
+    private function paginateQuery($data, $request)
+    {
+        $nPage = $request->get('nPage');
+        $nReturns = $request->get('nReturns');
+
+        $start = ($nPage - 1) * $nReturns;
+        $paginatedData = array_slice($data, $start, $nReturns);
+        $total = count($data);
+
+        return [
+            $total,
+            $paginatedData
+        ];
     }
 }
