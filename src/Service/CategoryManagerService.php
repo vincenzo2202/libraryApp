@@ -11,10 +11,32 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CategoryManagerService
 {
+    private $security;
+
     public function __construct(
         private CategoryRepository $categoryRE,
-        private EntityManagerInterface $em
-    ) {}
+        private EntityManagerInterface $em,
+        Security $security
+    ) {
+        $this->security = $security;
+    }
+
+    public function getCategoryById($id)
+    {
+        $category = $this->categoryRE->findOrFail($id);
+        $me = $this->tokenUserId();
+        if ($category->getUser()->getId() !== $me) {
+            throw new NotFoundException('Categoría no encontrada');
+        }
+
+        $formatedCategory = [
+            'id' => $category->getId(),
+            'name' => $category->getName(),
+            'color' => $category->getColor()
+        ];
+
+        return $formatedCategory;
+    }
 
     public function getCategoryList(Request $request): array
     {
@@ -59,10 +81,8 @@ class CategoryManagerService
         $this->categoryRE->remove($category);
     }
 
-    // private function checkIfHavePagination($request): void
-    // {
-    //     if (null === $request->get('nPage') || null === $request->get('nReturns')) {
-    //         throw new NotFoundException('Datos inválidos');
-    //     }
-    // }
+    public function tokenUserId(): int
+    {
+        return $this->security->getUser()->getId();
+    }
 }

@@ -26,7 +26,7 @@ class CategoryRepository extends ServiceEntityRepository
     public function findOrFail(int $id): Category
     {
         $category = $this->find($id);
-        if (!$category) throw new NotFoundException("Category no encontrado");
+        if (!$category) throw new NotFoundException("Categoría no encontrada");
 
         return $category;
     }
@@ -105,7 +105,7 @@ class CategoryRepository extends ServiceEntityRepository
         return $dataPaginated;
     }
 
-    private function paginateQuery($data, $request)
+    private function paginateQuery($data, $request): array
     {
         $nPage = $request->get('nPage');
         $nReturns = $request->get('nReturns');

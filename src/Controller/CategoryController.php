@@ -13,7 +13,17 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class CategoryController extends ApiController
 {
-    // get all categories
+    // get category by id
+    #[Route('/category/{id<\d+>}', name: 'app_category_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function getCategoryById(int $id, CategoryManagerService $categoryManagerSE): Response
+    {
+        $category = $categoryManagerSE->getCategoryById($id);
+
+        return $this->response($category);
+    }
+
+
     #[Route('/category', name: 'app_category_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function addCategoryList(Request $request, CategoryManagerService $categoryManagerSE): Response

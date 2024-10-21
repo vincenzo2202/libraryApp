@@ -10,10 +10,15 @@ use Symfony\Component\HttpFoundation\Request;
 class <?= $class_name ?>
 
 {
+private $security;
+
 public function __construct(
 private <?= $entity_class_name ?>Repository $<?= $nameVariable ?>RE,
-private EntityManagerInterface $em
-) {}
+private EntityManagerInterface $em,
+Security $security
+) {
+$this->security = $security;
+}
 
 public function selector()
 {
@@ -40,5 +45,10 @@ public function delete(int $id): void
 {
 $<?= $nameVariable ?> = $this-><?= $nameVariable ?>RE->findOrFail($id);
 $this-><?= $nameVariable ?>RE->remove($<?= $nameVariable ?>);
+}
+
+public function tokenUserId(): int
+{
+return $this->security->getUser()->getId();
 }
 }
