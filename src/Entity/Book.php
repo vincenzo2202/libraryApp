@@ -47,9 +47,6 @@ class Book
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?Publisher $publisher = null;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
-    private ?EditorialLine $editorialLine = null;
-
     /**
      * @var Collection<int, Category>
      */
@@ -185,18 +182,6 @@ class Book
     public function setPublisher(?Publisher $publisher): static
     {
         $this->publisher = $publisher;
-
-        return $this;
-    }
-
-    public function getEditorialLine(): ?EditorialLine
-    {
-        return $this->editorialLine;
-    }
-
-    public function setEditorialLine(?EditorialLine $editorialLine): static
-    {
-        $this->editorialLine = $editorialLine;
 
         return $this;
     }

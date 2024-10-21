@@ -31,12 +31,6 @@ class EditorialLine
     private ?Publisher $publisher = null;
 
     /**
-     * @var Collection<int, Book>
-     */
-    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'editorialLine')]
-    private Collection $books;
-
-    /**
      * @var Collection<int, Magazine>
      */
     #[ORM\OneToMany(targetEntity: Magazine::class, mappedBy: 'editorialLine')]
@@ -44,7 +38,6 @@ class EditorialLine
 
     public function __construct()
     {
-        $this->books = new ArrayCollection();
         $this->magazines = new ArrayCollection();
     }
 
@@ -109,36 +102,6 @@ class EditorialLine
     public function setPublisher(?Publisher $publisher): static
     {
         $this->publisher = $publisher;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Book>
-     */
-    public function getBooks(): Collection
-    {
-        return $this->books;
-    }
-
-    public function addBook(Book $book): static
-    {
-        if (!$this->books->contains($book)) {
-            $this->books->add($book);
-            $book->setEditorialLine($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBook(Book $book): static
-    {
-        if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
-            if ($book->getEditorialLine() === $this) {
-                $book->setEditorialLine(null);
-            }
-        }
 
         return $this;
     }
