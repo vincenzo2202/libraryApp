@@ -49,9 +49,9 @@ class UserManagerService
 
     public function getList($request): array
     {
-        [$total, $data] = $this->userRE->list($request);
-
         $this->checkIfHavePagination($request);
+
+        [$total, $data] = $this->userRE->list($request);
 
         if (empty($data)) {
             return [

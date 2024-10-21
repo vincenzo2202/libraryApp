@@ -119,7 +119,6 @@ class UserRepository extends ServiceEntityRepository
                 ->setParameter('genericFilter', '%' . $genericFilter . '%');
         }
 
-
         if (strtoupper($orderBy) === 'ASC') {
             $query->orderBy('U.id', 'ASC');
         } else if (strtoupper($orderBy) === 'DESC') {
@@ -139,8 +138,10 @@ class UserRepository extends ServiceEntityRepository
 
     public function obtainUserQuery()
     {
-        $query = $this->createQueryBuilder('U');
-
+        $query = $this->createQueryBuilder('U')
+            ->select('U.id', 'U.username', 'U.name', 'U.firstSurname', 'U.secondSurname', 'U.profileImage', 'U.creationDate')
+            ->andWhere('U.isDeleted = false')
+            ->andWhere('U.isValidated = true');
 
         return $query;
     }

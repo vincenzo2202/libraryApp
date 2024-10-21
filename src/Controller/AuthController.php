@@ -8,15 +8,11 @@ use App\Service\ImageUtilities;
 use App\Service\UserManagerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Mime\MimeTypes;
 
 // #[Route('/api')]
 class AuthController extends ApiController
@@ -41,14 +37,7 @@ class AuthController extends ApiController
         return new JsonResponse(['token' => $JWTManager->create($user)]);
     }
 
-    /**
-     *
-     * Checks if all needed parameters are present or not
-     *
-     * @param mixed $clienteJson
-     *
-     * @return [type]
-     */
+
     private function allNeededParametersPresent($clienteJson): string
     {
         $parameters = ['name', 'firstSurname', 'username', 'password'];

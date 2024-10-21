@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\NotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -171,5 +172,20 @@ class ApiController extends AbstractController
         $request->request->replace($data);
 
         return $request;
+    }
+
+    public function tokenIdToRequest($request)
+    {
+        //  necesito que el id del usuario se añada a la request automáticamente
+        $me = $this->getUser()->getId();
+        $request->request->add(['user' => $me]);
+        return $request;
+    }
+
+    public function checkIfHavePagination($request): void
+    {
+        if (null === $request->get('nPage') || null === $request->get('nReturns')) {
+            throw new NotFoundException('Datos inválidos');
+        }
     }
 }

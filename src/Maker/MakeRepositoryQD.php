@@ -141,6 +141,21 @@ $setters
         return \$$nameVariable;
     }
 
+     private function paginateQuery(\$data, \$request)
+    {
+        \$nPage = \$request->get('nPage');
+        \$nReturns = \$request->get('nReturns');
+
+        \$start = (\$nPage - 1) * \$nReturns;
+        \$paginatedData = array_slice(\$data, \$start, \$nReturns);
+        \$total = count(\$data);
+
+        return [
+            \$total,
+            \$paginatedData
+        ];
+    }
+
 PHP;
 
         // Insert the new function before the last closing brace

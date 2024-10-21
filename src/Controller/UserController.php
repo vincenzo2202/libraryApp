@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends ApiController
 {
     #[Route('/user', name: 'api_users', methods: ['GET'])]
-    // #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_ADMIN')]
     public function getUserList(Request $request, UserManagerService $userManagerSE): Response
     {
         $request = $this->transformJsonBody($request);
