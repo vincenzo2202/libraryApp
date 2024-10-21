@@ -3,8 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
-use App\Exception\CustomErrorException;
-use App\Exception\ValidationErrorException;
+use App\Exception\NotFoundException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,9 +51,7 @@ class UserManagerService
     {
         [$total, $data] = $this->userRE->list($request);
 
-        if (null === $request->get('nPage') || null === $request->get('nReturns')) {
-            throw new ValidationErrorException('Datos inválidos');
-        }
+        $this->checkIfHavePagination($request);
 
         if (empty($data)) {
             return [
@@ -67,5 +64,12 @@ class UserManagerService
             'total' => $total,
             'data' => $data
         ];
+    }
+
+    private function checkIfHavePagination($request): void
+    {
+        if (null === $request->get('nPage') || null === $request->get('nReturns')) {
+            throw new NotFoundException('Datos inválidos');
+        }
     }
 }
