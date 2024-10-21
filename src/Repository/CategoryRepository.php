@@ -93,13 +93,11 @@ class CategoryRepository extends ServiceEntityRepository
                 ->setParameter('genericFilter', '%' . $genericFilter . '%');
         }
 
-        if (strtoupper($orderBy) === 'ASC') {
-            $query->orderBy('C.id', 'ASC');
-        } else if (strtoupper($orderBy) === 'DESC') {
-            $query->orderBy('C.id', 'DESC');
-        } else {
-            $query->orderBy('C.id', 'DESC');
+        $orderBy = strtoupper($orderBy);
+        if ($orderBy !== 'ASC' && $orderBy !== 'DESC') {
+            $orderBy = 'DESC';
         }
+        $query->orderBy('C.id', $orderBy);
 
         $data = $query->getQuery()->getResult();
         $dataPaginated = $this->paginateQuery($data, $request);

@@ -119,13 +119,11 @@ class UserRepository extends ServiceEntityRepository
                 ->setParameter('genericFilter', '%' . $genericFilter . '%');
         }
 
-        if (strtoupper($orderBy) === 'ASC') {
-            $query->orderBy('U.id', 'ASC');
-        } else if (strtoupper($orderBy) === 'DESC') {
-            $query->orderBy('U.id', 'DESC');
-        } else {
-            $query->orderBy('U.id', 'DESC');
+        $orderBy = strtoupper($orderBy);
+        if ($orderBy !== 'ASC' && $orderBy !== 'DESC') {
+            $orderBy = 'DESC';
         }
+        $query->orderBy('U.id', $orderBy);
 
         $data = $query->getQuery()->getResult();
 
