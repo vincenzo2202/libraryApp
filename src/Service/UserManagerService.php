@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Exception\CustomErrorException;
+use App\Exception\ValidationErrorException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,6 +51,10 @@ class UserManagerService
     public function getList($request): array
     {
         [$total, $data] = $this->userRE->list($request);
+
+        if (null === $request->get('nPage') || null === $request->get('nReturns')) {
+            throw new ValidationErrorException('Datos inválidos');
+        }
 
         if (empty($data)) {
             return [

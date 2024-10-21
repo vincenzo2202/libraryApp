@@ -28,3 +28,7 @@ services:
     App\Service\ImageUtilities:
         arguments:
             $uploadsDirectory: '%uploads_directory%'
+
+    App\Exception\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
