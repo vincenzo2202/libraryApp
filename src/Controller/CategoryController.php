@@ -13,7 +13,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class CategoryController extends ApiController
 {
-    // get category by id
     #[Route('/category/{id<\d+>}', name: 'app_category_show', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function getCategoryById(int $id, CategoryManagerService $categoryManagerSE): Response
@@ -22,7 +21,6 @@ class CategoryController extends ApiController
 
         return $this->response($category);
     }
-
 
     #[Route('/category', name: 'app_category_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
@@ -53,6 +51,18 @@ class CategoryController extends ApiController
         $categoryManagerSE->create($request);
 
         return $this->respondWithSuccess('Se ha creado la categoría correctamente');
+    }
+
+    // edit category
+    #[Route('/category/{id<\d+>}', name: 'app_category_edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_USER')]
+    public function editCategory(int $id, Request $request, CategoryManagerService $categoryManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $categoryManagerSE->edit($id, $request);
+
+        return $this->respondWithSuccess('Se ha editado la categoría correctamente');
     }
 
 

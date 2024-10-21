@@ -57,7 +57,18 @@ class CategoryManagerService
     public function edit(int $id, $request): Category
     {
         $category = $this->categoryRE->findOrFail($id);
+
+        if ($category->getUser()->getId() !== $this->tokenUserId()) {
+            throw new NotFoundException('Categoría no encontrada');
+        }
+
         $category = $this->categoryRE->writeFromRequest($request, $category);
+
+        try {
+            $this->em->flush();
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
 
         return $category;
     }
