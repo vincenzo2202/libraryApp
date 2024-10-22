@@ -89,10 +89,21 @@ class PublisherManagerService
         return $publisher;
     }
 
-    public function delete(int $id): void
+    public function delete($ids): void
     {
-        $publisher = $this->publisherRE->findOrFail($id);
-        $this->publisherRE->remove($publisher);
+        $toDelete = [];
+
+        foreach ($ids as $id) {
+            $publisher = $this->publisherRE->findOrFail($id);
+            if ($publisher->getUser()->getId() !== $this->tokenUserId()) {
+                continue;
+            }
+            $toDelete[] = $publisher;
+        }
+
+        foreach ($toDelete as $publisher) {
+            $this->publisherRE->remove($publisher);
+        }
     }
 
     public function tokenUserId(): int

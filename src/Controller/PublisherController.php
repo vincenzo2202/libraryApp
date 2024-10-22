@@ -63,6 +63,24 @@ class PublisherController extends ApiController
         return $this->respondWithSuccess('Se ha editado el editor correctamente');
     }
 
+    // delete Publisher
+    #[Route('/publisher', name: 'app_publisher_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deletePublisher(Request $request, PublisherManagerService $publisherManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $ids = $request->get('ids');
+
+        $publisherManagerSE->delete($ids);
+
+        if (count($ids) === 1) {
+            return $this->respondWithSuccess('Se ha eliminado el editor correctamente');
+        }
+
+        return $this->respondWithSuccess('Se han eliminado los editores correctamente');
+    }
+
     private function allNeededParametersPresent(Request $request): void
     {
         $parameters = ['name', 'user'];
