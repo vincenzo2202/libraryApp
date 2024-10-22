@@ -5,6 +5,7 @@ namespace <?= $namespace ?>;
 use App\Entity\<?= $entity_class_name ?>;
 use App\Repository\<?= $entity_class_name ?>Repository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 
 class <?= $class_name ?>
