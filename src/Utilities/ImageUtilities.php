@@ -26,7 +26,7 @@ class ImageUtilities
     {
         // Generar un nombre único si no se proporciona uno
         if (!$newFilename) {
-            $newFilename = $file->getClientOriginalName();
+            $newFilename =  uniqid() . '-' . $file->getClientOriginalName();
         }
         // Mover el archivo al directorio de subidas
         try {
