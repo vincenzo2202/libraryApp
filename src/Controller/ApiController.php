@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Exception\NotFoundException;
+use App\Exception\ValidationErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -201,7 +202,7 @@ class ApiController extends AbstractController
 
         if (!empty($missingParameters)) {
             $message = 'Faltan los siguientes parámetros: ' . implode(', ', $missingParameters);
-            throw new \Exception($message);
+            throw new ValidationErrorException($message);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\EditorialLine;
+use App\Exception\NotFoundException;
 use App\Repository\EditorialLineRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -18,6 +19,26 @@ class EditorialLineManagerService
         Security $security
     ) {
         $this->security = $security;
+    }
+
+    public function getEditorialLineById($id): array
+    {
+        $editorialLine = $this->editorialLineRE->findOrFail($id);
+        // TODO: todas las lineas editoriales deben tener un publisher?
+        // $me = $this->tokenUserId();
+        // if ($editorialLine->getPublisher()->getUser()->getId() !== $me) {
+        //     throw new NotFoundException('Editorial no encontrado');
+        // }
+
+        $formatedEditorialLine = [
+            'id' => $editorialLine->getId(),
+            'name' => $editorialLine->getName(),
+            'description' => $editorialLine->getDescription(),
+            'color' => $editorialLine->getColor(),
+            'coverImage' => $editorialLine->getCoverImage()
+        ];
+
+        return $formatedEditorialLine;
     }
 
     public function selector()

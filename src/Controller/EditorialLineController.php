@@ -10,7 +10,15 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api')]
 class EditorialLineController extends ApiController
 {
-    //  add editorialLine
+    // get Editorial Line by id
+    #[Route('/editorial/{id<\d+>}', name: 'app_editorialLine_show', methods: ['GET'])]
+    public function getEditorialLineById(int $id, EditorialLineManagerService $editorialLineManagerSE): Response
+    {
+        $editorialLine = $editorialLineManagerSE->getEditorialLineById($id);
+
+        return $this->response($editorialLine);
+    }
+
     #[Route('/editorial', name: 'app_editorialLine_create', methods: ['POST'])]
     public function addEditorialLine(Request $request, EditorialLineManagerService $editorialLineManagerSE): Response
     {
