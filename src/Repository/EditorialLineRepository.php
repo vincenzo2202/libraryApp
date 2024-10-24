@@ -35,10 +35,15 @@ class EditorialLineRepository extends ServiceEntityRepository
         return $editorialLine;
     }
 
-    // public function getSelector(): array
-    // {
-    //     // TODO: Implement getSelector() method.
-    // }
+    public function getSelector(): array
+    {
+        $data = $this->createQueryBuilder('E')
+            ->select('E.id', 'E.name')
+            ->getQuery()
+            ->getResult();
+
+        return $data;
+    }
 
     public function setPropertiesIfFound(Request $request, EditorialLine $editorialLine): EditorialLine
     {

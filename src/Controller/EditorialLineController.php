@@ -36,6 +36,16 @@ class EditorialLineController extends ApiController
         return $this->response($editorialLines);
     }
 
+    // selector
+    #[Route('/editorial/selector', name: 'app_editorialLine_selector', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function selector(EditorialLineManagerService $editorialLineManagerSE): Response
+    {
+        $editorialLines = $editorialLineManagerSE->selector();
+
+        return $this->response($editorialLines);
+    }
+
     #[Route('/editorial', name: 'app_editorialLine_create', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function addEditorialLine(Request $request, EditorialLineManagerService $editorialLineManagerSE): Response
