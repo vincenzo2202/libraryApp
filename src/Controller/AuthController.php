@@ -23,7 +23,8 @@ class AuthController extends ApiController
     {
         $request = $this->transformJsonBody($request);
 
-        $this->allNeededParametersPresent($request);
+        $parameters = ['name', 'firstSurname', 'username', 'password'];
+        $this->allNeededParametersPresent($request, $parameters);
 
         $userManagerSE->create($request);
 
@@ -35,26 +36,5 @@ class AuthController extends ApiController
     {
         $user = $userRepository->findOneBy(array('username' => $user->getUserIdentifier()));
         return new JsonResponse(['token' => $JWTManager->create($user)]);
-    }
-
-
-    private function allNeededParametersPresent($clienteJson): string
-    {
-        $parameters = ['name', 'firstSurname', 'username', 'password'];
-
-        foreach ($parameters as $param) {
-            if (
-                $clienteJson->get($param) === null || $clienteJson->get($param) === ''
-            ) {
-                return $param;
-            }
-
-            if ($param !== '') {
-                return $this->respondValidationError('Falta el parámetro: ' . $param);
-            }
-        }
-
-
-        return '';
     }
 }

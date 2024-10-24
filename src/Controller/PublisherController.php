@@ -45,7 +45,8 @@ class PublisherController extends ApiController
         $request = $this->transformJsonBody($request);
         $request = $this->tokenIdToRequest($request);
 
-        $this->allNeededParametersPresent($request);
+        $parameters = ['name', 'user'];
+        $this->allNeededParametersPresent($request, $parameters);
 
         $publisherManagerSE->create($request);
 
@@ -79,22 +80,5 @@ class PublisherController extends ApiController
         }
 
         return $this->respondWithSuccess('Se han eliminado los editores correctamente');
-    }
-
-    private function allNeededParametersPresent(Request $request): void
-    {
-        $parameters = ['name', 'user'];
-        $missingParameters = [];
-
-        foreach ($parameters as $parameter) {
-            if (empty($request->get($parameter))) {
-                $missingParameters[] = $parameter;
-            }
-        }
-
-        if (!empty($missingParameters)) {
-            $message = 'Faltan los siguientes parámetros: ' . implode(', ', $missingParameters);
-            throw new \Exception($message);
-        }
     }
 }

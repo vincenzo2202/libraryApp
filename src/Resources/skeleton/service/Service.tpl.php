@@ -31,6 +31,13 @@ public function edit(int $id, $request): <?= $entity_class_name ?>
 {
 $<?= $nameVariable ?> = $this-><?= $nameVariable ?>RE->findOrFail($id);
 $<?= $nameVariable ?> = $this-><?= $nameVariable ?>RE->writeFromRequest($request, $<?= $nameVariable ?>);
+
+try {
+$this->em->flush();
+} catch (\Exception $e) {
+throw new \Exception($e->getMessage());
+}
+
 return $<?= $nameVariable ?>;
 }
 
@@ -39,6 +46,13 @@ public function create(Request $request): <?= $entity_class_name ?>
 {
 $request = json_decode($request->getContent(), true);
 $<?= $nameVariable ?> = $this-><?= $nameVariable ?>RE->writeFromRequest($request);
+
+try {
+$this->em->flush();
+} catch (\Exception $e) {
+throw new \Exception($e->getMessage());
+}
+
 return $<?= $nameVariable ?>;
 }
 

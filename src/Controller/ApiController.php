@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\SerializationContext;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiController extends AbstractController
 {
@@ -176,7 +177,6 @@ class ApiController extends AbstractController
 
     public function tokenIdToRequest($request)
     {
-        //  necesito que el id del usuario se añada a la request automáticamente
         $me = $this->getUser()->getId();
         $request->request->add(['user' => $me]);
         return $request;
@@ -186,6 +186,22 @@ class ApiController extends AbstractController
     {
         if (null === $request->get('nPage') || null === $request->get('nReturns')) {
             throw new NotFoundException('Datos inválidos');
+        }
+    }
+
+    public function allNeededParametersPresent(Request $request, array $parameters): void
+    {
+        $missingParameters = [];
+
+        foreach ($parameters as $parameter) {
+            if (empty($request->get($parameter))) {
+                $missingParameters[] = $parameter;
+            }
+        }
+
+        if (!empty($missingParameters)) {
+            $message = 'Faltan los siguientes parámetros: ' . implode(', ', $missingParameters);
+            throw new \Exception($message);
         }
     }
 }

@@ -45,8 +45,8 @@ class CategoryController extends ApiController
 
         $me = $this->getUser()->getId();
         $request->request->add(['user' => $me]);
-
-        $this->allNeededParametersPresent($request);
+        $parameters = ['name', 'color'];
+        $this->allNeededParametersPresent($request, $parameters);
 
         $categoryManagerSE->create($request);
 
@@ -80,25 +80,5 @@ class CategoryController extends ApiController
         }
 
         return $this->respondWithSuccess('Se han eliminado las categorías correctamente');
-    }
-
-
-    private function allNeededParametersPresent($request): string
-    {
-        $parameters = ['name', 'color'];
-
-        foreach ($parameters as $param) {
-            if (
-                $request->get($param) === null || $request->get($param) === ''
-            ) {
-                return $param;
-            }
-
-            if ($param !== '') {
-                return $this->respondValidationError('Falta el parámetro: ' . $param);
-            }
-        }
-
-        return '';
     }
 }
