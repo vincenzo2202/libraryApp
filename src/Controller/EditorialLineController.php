@@ -51,4 +51,15 @@ class EditorialLineController extends ApiController
 
         return $this->respondWithSuccess('Se ha creado la línea editorial correctamente');
     }
+
+    #[Route('/editorial/{id<\d+>}', name: 'app_editorialLine_edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_USER')]
+    public function editEditorialLine(int $id, Request $request, EditorialLineManagerService $editorialLineManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $editorialLineManagerSE->edit($id, $request);
+
+        return $this->respondWithSuccess('Se ha editado la línea editorial correctamente');
+    }
 }

@@ -62,7 +62,7 @@ class EditorialLineManagerService
     {
         return $this->editorialLineRE->getSelector();
     }
-
+    // 
     public function edit(int $id, $request): EditorialLine
     {
         $editorialLine = $this->editorialLineRE->findOrFail($id);
@@ -99,25 +99,5 @@ class EditorialLineManagerService
     public function tokenUserId(): int
     {
         return $this->security->getUser()->getId();
-    }
-
-    public function formatData($data)
-    {
-        $formatedData = [];
-        foreach ($data as $editorialLine) {
-            $formatedData[] = [
-                'id' => $editorialLine['id'],
-                'name' => $editorialLine['name'],
-                'description' => $editorialLine['description'],
-                'color' => $editorialLine['color'],
-                'coverImage' => $editorialLine['coverImage'],
-                'publisher' => [
-                    'id' => $editorialLine['publisherId'],
-                    'name' => $editorialLine['publisher']
-                ]
-            ];
-        }
-
-        return $formatedData;
     }
 }

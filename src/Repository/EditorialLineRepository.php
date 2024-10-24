@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\EditorialLine;
 use App\Entity\Publisher;
 use App\Exception\NotFoundException;
+use App\Exception\ValidationErrorException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,8 +42,18 @@ class EditorialLineRepository extends ServiceEntityRepository
 
     public function setPropertiesIfFound(Request $request, EditorialLine $editorialLine): EditorialLine
     {
-        $request->get('name') === null ? '' : $editorialLine->setName($request->get('name'));
-        $request->get('description') === null ? '' : $editorialLine->setDescription($request->get('description'));
+        $name = $request->get('name');
+        if ($name !== null && strlen($name) > 255) {
+            throw new ValidationErrorException(' El nombre no puede tener más de 255 caracteres.');
+        }
+        $name === null ? '' : $editorialLine->setName($name);
+
+        $description = $request->get('description');
+        if ($description !== null && strlen($description) > 255) {
+            throw new ValidationErrorException('La descripción no puede tener más de 255 caracteres.');
+        }
+        $editorialLine === null ? '' : $editorialLine->setDescription($description);
+
         $request->get('color') === null ? '' : $editorialLine->setColor($request->get('color'));
 
         if ($request->files->get('coverImage') !== null) {
@@ -52,7 +63,6 @@ class EditorialLineRepository extends ServiceEntityRepository
                 $editorialLine->setCoverImage($imagePath);
             }
         }
-        // lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
 
         if ($request->get('publisher') !== null) {
             $publisherRepository = $this->_em->getRepository(Publisher::class);
