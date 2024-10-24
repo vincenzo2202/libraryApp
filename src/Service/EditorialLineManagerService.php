@@ -41,6 +41,23 @@ class EditorialLineManagerService
         return $formatedEditorialLine;
     }
 
+    public function getEditorialLineList($request): array
+    {
+        [$total, $editorialLines] = $this->editorialLineRE->list($request);
+
+        if ($editorialLines === []) {
+            return [
+                'total' => $total,
+                'data' => []
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'data' => $editorialLines
+        ];
+    }
+
     public function selector()
     {
         return $this->editorialLineRE->getSelector();
@@ -82,5 +99,25 @@ class EditorialLineManagerService
     public function tokenUserId(): int
     {
         return $this->security->getUser()->getId();
+    }
+
+    public function formatData($data)
+    {
+        $formatedData = [];
+        foreach ($data as $editorialLine) {
+            $formatedData[] = [
+                'id' => $editorialLine['id'],
+                'name' => $editorialLine['name'],
+                'description' => $editorialLine['description'],
+                'color' => $editorialLine['color'],
+                'coverImage' => $editorialLine['coverImage'],
+                'publisher' => [
+                    'id' => $editorialLine['publisherId'],
+                    'name' => $editorialLine['publisher']
+                ]
+            ];
+        }
+
+        return $formatedData;
     }
 }

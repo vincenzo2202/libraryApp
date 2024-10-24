@@ -100,8 +100,6 @@ class PublisherRepository extends ServiceEntityRepository
         $genericFilter = $request->get('genericFilter');
         $orderBy = $request->get('orderBy');
 
-        $nPage = $request->get('nPage');
-        $nReturns = $request->get('nReturns');
 
         $query = $this->createQueryBuilder('P')
             ->select('P.id', 'P.name', 'P.description', 'P.color', 'P.logo')

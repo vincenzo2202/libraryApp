@@ -97,6 +97,55 @@ class EditorialLineRepository extends ServiceEntityRepository
         return $editorialLine;
     }
 
+    public function list($request): array
+    {
+        $genericFilter = $request->get('genericFilter');
+        $orderBy = $request->get('orderBy');
+
+        $query  = $this->createQueryBuilder('E')
+            ->select('E.id', 'E.name', 'E.description', 'E.color', 'E.coverImage', 'P.name as publisher', 'P.id as publisherId')
+            ->leftJoin('E.publisher', 'P');
+
+        if ($genericFilter) {
+            $query->andWhere('E.name LIKE :genericFilter')
+                ->setParameter('genericFilter', '%' . $genericFilter . '%');
+        }
+
+        $orderBy = strtoupper($orderBy);
+        if ($orderBy !== 'ASC' && $orderBy !== 'DESC') {
+            $orderBy = 'DESC';
+        }
+
+        $query->orderBy('E.id', $orderBy);
+
+        $data = $query->getQuery()->getResult();
+        $data = $this->formatData($data);
+        $dataPaginated = $this->paginateQuery($data, $request);
+
+        return $dataPaginated;
+    }
+
+    // TODO: sacar a un format service
+    private function formatData($data)
+    {
+        $formatedData = [];
+        foreach ($data as $editorialLine) {
+            $formatedData[] = [
+                'id' => $editorialLine['id'],
+                'name' => $editorialLine['name'],
+                'description' => $editorialLine['description'],
+                'color' => $editorialLine['color'],
+                'coverImage' => $editorialLine['coverImage'],
+                'publisher' => [
+                    'id' => $editorialLine['publisherId'],
+                    'name' => $editorialLine['publisher']
+                ]
+            ];
+        }
+
+        return $formatedData;
+    }
+
     private function paginateQuery($data, $request)
     {
         $nPage = $request->get('nPage');
