@@ -90,10 +90,17 @@ class EditorialLineManagerService
         return $editorialLine;
     }
 
-    public function delete(int $id): void
+    public function delete(array $ids): void
     {
-        $editorialLine = $this->editorialLineRE->findOrFail($id);
-        $this->editorialLineRE->remove($editorialLine);
+        $toDelete = [];
+        foreach ($ids as $id) {
+            $editorialLine = $this->editorialLineRE->findOrFail($id);
+            $toDelete[] = $editorialLine;
+        }
+
+        foreach ($toDelete as $editorialLine) {
+            $this->editorialLineRE->remove($editorialLine);
+        }
     }
 
     public function tokenUserId(): int

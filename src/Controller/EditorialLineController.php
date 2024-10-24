@@ -36,7 +36,6 @@ class EditorialLineController extends ApiController
         return $this->response($editorialLines);
     }
 
-
     #[Route('/editorial', name: 'app_editorialLine_create', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function addEditorialLine(Request $request, EditorialLineManagerService $editorialLineManagerSE): Response
@@ -61,5 +60,22 @@ class EditorialLineController extends ApiController
         $editorialLineManagerSE->edit($id, $request);
 
         return $this->respondWithSuccess('Se ha editado la línea editorial correctamente');
+    }
+
+    #[Route('/editorial', name: 'app_editorialLine_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deleteEditorialLine(Request $request, EditorialLineManagerService $editorialLineManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $ids = $request->get('ids');
+
+        $editorialLineManagerSE->delete($ids);
+
+        if (count($ids) === 1) {
+            return $this->respondWithSuccess('Se ha eliminado la línea editorial correctamente');
+        }
+
+        return $this->respondWithSuccess('Se han eliminado las líneas editoriales correctamente');
     }
 }
