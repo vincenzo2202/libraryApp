@@ -88,6 +88,7 @@ class MakeRepositoryQD extends AbstractMaker
         $filesystem = new Filesystem();
         $repositoryContent = file_get_contents($repositoryFilePath);
         $setters = $this->generateSetters($entityClassName, $nameVariable);
+        $selector = $this->generateSelector($entityClassName);
 
         $newFunction = <<<PHP
 
@@ -99,9 +100,9 @@ class MakeRepositoryQD extends AbstractMaker
         return \$$nameVariable;
     }
 
-    public function getSelector(): array
+   public function getSelector(): array
     {
-        // TODO: Implement getSelector() method.
+    $selector
     }
 
     public function setPropertiesIfFound(Request \$request, $entityClassName \$$nameVariable): $entityClassName
@@ -210,6 +211,34 @@ PHP;
         }
 
         return $setters;
+    }
+
+    private function generateSelector(string $entityClassName): string
+    {
+        $reflector = new \ReflectionClass('App\\Entity\\' . $entityClassName);
+        $properties = $reflector->getProperties();
+        $selectFields = [];
+
+        // Obtener la primera letra del nombre de la entidad
+        $entityAlias = strtoupper($entityClassName[0]);
+
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            if ($propertyName === 'id') {
+                $selectFields[] = $entityAlias . '.' . $propertyName;
+            }
+        }
+
+        $selectFieldsString = implode(', ', $selectFields);
+
+        return <<<PHP
+            \$data = \$this->createQueryBuilder('$entityAlias')
+                ->select('$selectFieldsString') // Seleccionar los campos necesarios
+                ->getQuery()
+                ->getResult();
+    
+            return \$data;
+    PHP;
     }
 
     public function configureDependencies(DependencyBuilder $dependencies): void
