@@ -11,8 +11,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class AuthorController extends ApiController
 {
+    #[Route('/author', name: 'app_author_index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function authorList(Request $request, AuthorManagerService $authorManagerService): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $request = $this->tokenIdToRequest($request);
 
-    // add author
+        $this->checkIfHavePagination($request);
+
+        $authors = $authorManagerService->getAuthorList($request);
+
+        return $this->response($authors);
+    }
+
+
     #[Route('/author', name: 'app_author_create', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function addAuthor(Request $request, AuthorManagerService $authorManagerService): Response

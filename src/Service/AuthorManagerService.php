@@ -25,6 +25,23 @@ class AuthorManagerService
         return $this->authorRE->getSelector();
     }
 
+    public function getAuthorList($request): array
+    {
+        [$total, $authors] = $this->authorRE->list($request);
+
+        if ($authors === []) {
+            return [
+                'total' => $total,
+                'data' => []
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'data' => $authors
+        ];
+    }
+
     public function edit(int $id, $request): Author
     {
         $author = $this->authorRE->findOrFail($id);

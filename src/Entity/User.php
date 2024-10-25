@@ -61,6 +61,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Purchase::class, mappedBy: 'user')]
     private Collection $purchases;
 
+    /**
+     * @var Collection<int, Author>
+     */
+    #[ORM\OneToMany(targetEntity: Author::class, mappedBy: 'user')]
+    private Collection $authors;
+
     // /**
     //  * @var Collection<int, Category>
     //  */
@@ -72,6 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->publishers = new ArrayCollection();
         $this->purchases = new ArrayCollection();
         // $this->categories = new ArrayCollection();
+        $this->authors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -320,4 +327,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     //     return $this;
     // }
+
+    /**
+     * @return Collection<int, Author>
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    public function addAuthor(Author $author): static
+    {
+        if (!$this->authors->contains($author)) {
+            $this->authors->add($author);
+            $author->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthor(Author $author): static
+    {
+        if ($this->authors->removeElement($author)) {
+            // set the owning side to null (unless already changed)
+            if ($author->getUser() === $this) {
+                $author->setUser(null);
+            }
+        }
+
+        return $this;
+    }
 }

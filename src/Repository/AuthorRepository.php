@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Author;
+use App\Entity\User;
 use App\Exception\NotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,6 +50,12 @@ class AuthorRepository extends ServiceEntityRepository
             new \DateTime($request->get('birthDate'))
         );
 
+        if ($request->get('user') !== null) {
+            $userRepository = $this->_em->getRepository(User::class);
+            $user = $userRepository->findOrFail($request->get('user'));
+            $author->setUser($user);
+        }
+
         return $author;
     }
 
@@ -81,6 +88,36 @@ class AuthorRepository extends ServiceEntityRepository
         $this->_em->persist($author);
 
         return $author;
+    }
+
+    public function list($request): array
+    {
+        $genericFilter = $request->get('genericFilter');
+        $orderBy = $request->get('orderBy');
+
+        $query  = $this->createQueryBuilder('A')
+            ->select('A.id', 'A.name', 'A.firstSurname', 'A.secondSurname', 'A.biography', 'A.birthDate')
+            ->leftJoin('A.user', 'U')
+            ->andWhere('U.id = :userId')
+            ->setParameter('userId', $request->get('user'))
+            ->orWhere('A.user IS NULL');
+
+
+        if ($genericFilter) {
+            $query->andWhere('(A.name LIKE :genericFilter OR A.firstSurname LIKE :genericFilter OR A.secondSurname LIKE :genericFilter)')
+                ->setParameter('genericFilter', '%' . $genericFilter . '%');
+        }
+
+        $orderBy = strtoupper($orderBy);
+        if ($orderBy !== 'ASC' && $orderBy !== 'DESC') {
+            $orderBy = 'DESC';
+        }
+
+        $query->orderBy('A.id', $orderBy);
+
+        $data = $query->getQuery()->getResult();
+
+        return $this->paginateQuery($data, $request);
     }
 
     private function paginateQuery($data, $request)
