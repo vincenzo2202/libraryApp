@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Author;
+use App\Exception\NotFoundException;
 use App\Repository\AuthorRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,6 +24,26 @@ class AuthorManagerService
     public function selector()
     {
         return $this->authorRE->getSelector();
+    }
+
+    public function getAuthorById($id): array
+    {
+        $author = $this->authorRE->findOrFail($id);
+
+        if ($author->getUser() == NULL || $author->getUser()->getId() == $this->tokenUserId()) {
+            $formatedAuthor = [
+                'id' => $author->getId(),
+                'name' => $author->getName(),
+                'firstSurname' => $author->getFirstSurname(),
+                'secondSurname' => $author->getSecondSurname(),
+                'biography' => $author->getBiography(),
+                'birthDate' => $author->getBirthDate(),
+            ];
+        } else {
+            throw new NotFoundException('Autor no encontrado');
+        }
+
+        return $formatedAuthor;
     }
 
     public function getAuthorList($request): array
