@@ -94,10 +94,21 @@ class AuthorManagerService
         return $author;
     }
 
-    public function delete(int $id): void
+    public function delete(array $ids): void
     {
-        $author = $this->authorRE->findOrFail($id);
-        $this->authorRE->remove($author);
+        $toDelete = [];
+        foreach ($ids as $id) {
+            $author = $this->authorRE->findOrFail($id);
+
+            if ($author->getUser() == NULL || $author->getUser()->getId() != $this->tokenUserId()) {
+                continue;
+            }
+            $toDelete[] = $author;
+        }
+
+        foreach ($toDelete as $author) {
+            $this->authorRE->remove($author);
+        }
     }
 
     public function tokenUserId(): int

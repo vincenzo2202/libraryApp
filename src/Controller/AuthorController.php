@@ -51,7 +51,6 @@ class AuthorController extends ApiController
         return $this->respondWithSuccess('Se ha creado el autor correctamente');
     }
 
-    // edit author
     #[Route('/author/{id<\d+>}', name: 'app_author_edit', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]
     public function editAuthor(int $id, Request $request, AuthorManagerService $authorManagerService): Response
@@ -61,5 +60,22 @@ class AuthorController extends ApiController
         $authorManagerService->edit($id, $request);
 
         return $this->respondWithSuccess('Se ha editado el autor correctamente');
+    }
+
+    #[Route('/author', name: 'app_author_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deleteAuthor(Request $request, AuthorManagerService $authorManagerService): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $ids = $request->get('ids');
+
+        $authorManagerService->delete($ids);
+
+        if (count($ids) === 1) {
+            return $this->respondWithSuccess('Se ha eliminado el autor correctamente');
+        }
+
+        return $this->respondWithSuccess('Se han eliminado los autores correctamente');
     }
 }
