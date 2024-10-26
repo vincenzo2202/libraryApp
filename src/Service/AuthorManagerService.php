@@ -66,6 +66,10 @@ class AuthorManagerService
     public function edit(int $id, $request): Author
     {
         $author = $this->authorRE->findOrFail($id);
+
+        if ($author->getUser() == NULL || $author->getUser()->getId() != $this->tokenUserId()) {
+            throw new NotFoundException('No tienes permisos para editar este autor');
+        }
         $author = $this->authorRE->writeFromRequest($request, $author);
 
         try {

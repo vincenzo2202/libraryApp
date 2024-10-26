@@ -50,4 +50,16 @@ class AuthorController extends ApiController
 
         return $this->respondWithSuccess('Se ha creado el autor correctamente');
     }
+
+    // edit author
+    #[Route('/author/{id<\d+>}', name: 'app_author_edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_USER')]
+    public function editAuthor(int $id, Request $request, AuthorManagerService $authorManagerService): Response
+    {
+        $request = $this->transformJsonBody($request);
+
+        $authorManagerService->edit($id, $request);
+
+        return $this->respondWithSuccess('Se ha editado el autor correctamente');
+    }
 }
