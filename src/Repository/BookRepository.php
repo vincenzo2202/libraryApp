@@ -6,6 +6,7 @@ use App\Entity\Author;
 use App\Entity\Book;
 use App\Entity\Category;
 use App\Entity\Publisher;
+use App\Entity\User;
 use App\Exception\NotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -42,7 +43,7 @@ class BookRepository extends ServiceEntityRepository
     public function getSelector(): array
     {
         $data = $this->createQueryBuilder('B')
-            ->select('B.id') // Seleccionar los campos necesarios
+            ->select('B.id') //  
             ->getQuery()
             ->getResult();
 
@@ -92,12 +93,21 @@ class BookRepository extends ServiceEntityRepository
             $category = $categoryRepository->findOrFail($request->get('categories'));
             $book->addCategory($category);
         }
+
         if ($request->get('author') !== null && gettype($request->get('author')) ===  'object') {
             // creo un nuevo author
         } else {
             $authorRepository = $this->_em->getRepository(Author::class);
             $author = $authorRepository->findOrFail($request->get('author'));
             $book->setAuthor($author);
+        }
+
+        // TODO: falta poner condición para que admin no añada id
+        // if ($request->get('user') !== null && $request->get('user') !== 2) {
+        if ($request->get('user') !== null) {
+            $userRepository = $this->_em->getRepository(User::class);
+            $user = $userRepository->findOrFail($request->get('user'));
+            $book->setUser($user);
         }
 
         return $book;

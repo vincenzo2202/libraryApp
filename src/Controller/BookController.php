@@ -13,6 +13,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class BookController extends ApiController
 {
+    //   getById
+    #[Route('/book/{id<\d+>}', name: 'get_book', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function getBookById(int $id, BookManagerService $bookManagerSE): Response
+    {
+        $book = $bookManagerSE->getBooksById($id);
+
+        return $this->response($book);
+    }
+
     //   post
     #[Route('/book', name: 'create_book', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
@@ -23,7 +33,6 @@ class BookController extends ApiController
 
         $parameters = ['title', 'isSpecialEdition', 'status', 'author', 'publisher', 'categories'];
         $this->allNeededParametersPresent($request, $parameters);
-
         $bookManagerSE->create($request);
 
         return $this->respondWithSuccess('Se ha añadido el libro correctamente');

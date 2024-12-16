@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Exception\NotFoundException;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,6 +24,40 @@ class BookManagerService
     public function selector()
     {
         return $this->bookRE->getSelector();
+    }
+
+    public function getBooksById($id): array
+    {
+        $book = $this->bookRE->findOrFail($id);
+
+        if ($book->getUser() == NULL || $book->getUser()->getId() == $this->tokenUserId()) {
+            $formatedBook = [
+                'id' => $book->getId(),
+                'title' => $book->getTitle(),
+                'isSpecialEdition' => $book->isSpecialEdition(),
+                'status' => $book->getStatus()->value,
+                'author' => [
+                    'id' => $book->getAuthor()->getId(),
+                    'name' => $book->getAuthor()->getName() . ' ' . $book->getAuthor()->getFirstSurname() . ' ' . $book->getAuthor()->getSecondSurname(),
+                    'biography' => $book->getAuthor()->getBiography(),
+                    'birthDate' => $book->getAuthor()->getBirthDate(),
+                ],
+                'publisher' => [
+                    'id' => $book->getPublisher()->getId(),
+                    'name' => $book->getPublisher()->getName(),
+                ],
+                'categories' => $book->getCategories()->map(function ($category) {
+                    return [
+                        'id' => $category->getId(),
+                        'name' => $category->getName(),
+                    ];
+                })->toArray(),
+            ];
+        } else {
+            throw new NotFoundException('Libro no encontrado');
+        }
+
+        return $formatedBook;
     }
 
     public function edit(int $id, $request): Book
