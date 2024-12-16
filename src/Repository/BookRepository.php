@@ -144,6 +144,46 @@ class BookRepository extends ServiceEntityRepository
         return $book;
     }
 
+    public function list($request): array
+    {
+        $genericFilter = $request->get('genericFilter');
+        $orderBy = $request->get('orderBy');
+
+        $query = $this->createQueryBuilder('A')
+            ->select('A.id', 'A.title', 'A.isbn', 'A.description', 'A.publicationYear', 'A.pages', 'A.comment', 'A.coverImage', 'A.status')
+            ->leftJoin('A.publisher', 'P')
+            ->addSelect('P.id AS publisherId', 'P.name AS publisherName')
+            ->leftJoin('A.categories', 'C')
+            ->addSelect('C.id AS categoryId', 'C.name AS categoryName')
+            ->leftJoin('A.author', 'Au')
+            ->addSelect('Au.id AS authorId', 'CONCAT(Au.name, \' \', Au.firstSurname, \' \', Au.secondSurname) AS authorName')
+            ->leftJoin('A.user', 'U')
+            ->andWhere('U.id = :userId')
+            ->setParameter('userId', $request->get('user'))
+            ->orWhere('A.user IS NULL');
+
+        if ($genericFilter) {
+            $query->andWhere('(A.title LIKE :genericFilter OR A.isbn LIKE :genericFilter OR A.description LIKE :genericFilter OR A.publicationYear LIKE :genericFilter OR A.pages LIKE :genericFilter OR A.comment LIKE :genericFilter OR A.coverImage LIKE :genericFilter OR A.status  LIKE :genericFilter OR P.name LIKE :genericFilter OR C.name LIKE :genericFilter OR Au.name LIKE :genericFilter OR Au.firstSurname LIKE :genericFilter OR Au.secondSurname LIKE :genericFilter OR U.name LIKE :genericFilter OR U.firstSurname LIKE :genericFilter OR U.secondSurname LIKE :genericFilter)')
+                ->setParameter('genericFilter', '%' . $genericFilter . '%');
+        }
+
+        $orderBy = strtoupper($orderBy);
+        if ($orderBy !== 'ASC' && $orderBy !== 'DESC') {
+            $orderBy = 'DESC';
+        }
+
+        $query->orderBy('A.id', $orderBy);
+
+        $data = $query->getQuery()->getResult();
+
+        $data = array_map(function ($book) {
+            $book['status'] = $book['status']->value;
+            return $book;
+        }, $data);
+
+        return $this->paginateQuery($data, $request);
+    }
+
     private function paginateQuery($data, $request)
     {
         $nPage = $request->get('nPage');

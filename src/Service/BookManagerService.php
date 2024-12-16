@@ -60,6 +60,23 @@ class BookManagerService
         return $formatedBook;
     }
 
+    public function getBooksList($request): array
+    {
+        [$total, $books] = $this->bookRE->list($request);
+
+        if ($books === []) {
+            return [
+                'total' => $total,
+                'data' => []
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'data' => $books
+        ];
+    }
+
     public function edit(int $id, $request): Book
     {
         $book = $this->bookRE->findOrFail($id);

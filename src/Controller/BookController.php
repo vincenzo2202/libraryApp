@@ -23,6 +23,21 @@ class BookController extends ApiController
         return $this->response($book);
     }
 
+    //   getList
+    #[Route('/book', name: 'get_books', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function bookList(Request $request, BookManagerService $bookManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $request = $this->tokenIdToRequest($request);
+
+        $this->checkIfHavePagination($request);
+
+        $books = $bookManagerSE->getBooksList($request);
+
+        return $this->response($books);
+    }
+
     //   post
     #[Route('/book', name: 'create_book', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
