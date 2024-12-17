@@ -104,10 +104,24 @@ class BookManagerService
         return $book;
     }
 
-    public function delete(int $id): void
+    public function delete(array $ids): void
     {
-        $book = $this->bookRE->findOrFail($id);
-        $this->bookRE->remove($book);
+        $toDelete = [];
+
+
+        foreach ($ids as $id) {
+            $book = $this->bookRE->findOrFail($id);
+            if ($book->getUser() == NULL || $book->getUser()->getId() !== $this->tokenUserId()) {
+                continue;
+            }
+            $toDelete[] = $book;
+        }
+
+        foreach ($toDelete as $book) {
+            $this->bookRE->remove($book, false);
+        }
+
+        $this->em->flush();
     }
 
     public function tokenUserId(): int

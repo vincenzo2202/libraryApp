@@ -92,6 +92,7 @@ class BookRepository extends ServiceEntityRepository
         } else if ($request->get('categories') === null) {
             '';
         } else {
+
             $categoryRepository = $this->_em->getRepository(Category::class);
             $category = $categoryRepository->findOrFail($request->get('categories'));
             $book->addCategory($category);

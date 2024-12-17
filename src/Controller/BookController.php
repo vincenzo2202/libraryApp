@@ -62,4 +62,21 @@ class BookController extends ApiController
         $bookManagerSE->edit($id, $request);
         return $this->respondWithSuccess('Se ha editado el libro correctamente');
     }
+
+    //   delete
+    #[Route('/book', name: 'delete_book', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deleteBook(Request $request, BookManagerService $bookManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $ids = $request->get('ids');
+
+        $bookManagerSE->delete($ids);
+
+        if (count($ids) === 1) {
+            return $this->respondWithSuccess('Se ha eliminado el libro correctamente');
+        }
+
+        return $this->respondWithSuccess('Se han eliminado los libros correctamente');
+    }
 }
