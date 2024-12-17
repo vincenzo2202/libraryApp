@@ -52,4 +52,14 @@ class BookController extends ApiController
 
         return $this->respondWithSuccess('Se ha añadido el libro correctamente');
     }
+
+    //   put
+    #[Route('/book/{id<\d+>}', name: 'edit_book', methods: ['PUT'])]
+    #[IsGranted('ROLE_USER')]
+    public function editBook(int $id, Request $request, BookManagerService $bookManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $bookManagerSE->edit($id, $request);
+        return $this->respondWithSuccess('Se ha editado el libro correctamente');
+    }
 }

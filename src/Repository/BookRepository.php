@@ -78,6 +78,8 @@ class BookRepository extends ServiceEntityRepository
 
         if ($request->get('publisher') !== null && gettype($request->get('publisher')) ===  'object') {
             // creo un nuevo publisher
+        } else if ($request->get('publisher') === null) {
+            '';
         } else {
             $publisherRepository = $this->_em->getRepository(Publisher::class);
             $publisher = $publisherRepository->findOrFail($request->get('publisher'));
@@ -87,8 +89,9 @@ class BookRepository extends ServiceEntityRepository
 
         if ($request->get('categories') !== null && gettype($request->get('categories')) ===  'object') {
             // creo un nuevo category
+        } else if ($request->get('categories') === null) {
+            '';
         } else {
-
             $categoryRepository = $this->_em->getRepository(Category::class);
             $category = $categoryRepository->findOrFail($request->get('categories'));
             $book->addCategory($category);
@@ -96,12 +99,13 @@ class BookRepository extends ServiceEntityRepository
 
         if ($request->get('author') !== null && gettype($request->get('author')) ===  'object') {
             // creo un nuevo author
+        } else if ($request->get('author') === null) {
+            '';
         } else {
             $authorRepository = $this->_em->getRepository(Author::class);
             $author = $authorRepository->findOrFail($request->get('author'));
             $book->setAuthor($author);
         }
-
         // TODO: falta poner condición para que admin no añada id
         // if ($request->get('user') !== null && $request->get('user') !== 2) {
         if ($request->get('user') !== null) {
