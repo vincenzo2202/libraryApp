@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\BookManagerService;
+use App\Service\PurchaseManagerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,11 +49,11 @@ class BookController extends ApiController
 
         $parameters = ['title', 'isSpecialEdition', 'status', 'author', 'publisher', 'categories'];
         $this->allNeededParametersPresent($request, $parameters);
-        $bookManagerSE->create($request);
+        $book = $bookManagerSE->create($request);
+
 
         return $this->respondWithSuccess('Se ha añadido el libro correctamente');
     }
-
     //   put
     #[Route('/book/{id<\d+>}', name: 'edit_book', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]

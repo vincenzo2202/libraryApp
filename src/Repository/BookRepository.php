@@ -6,6 +6,7 @@ use App\Entity\Author;
 use App\Entity\Book;
 use App\Entity\Category;
 use App\Entity\Publisher;
+use App\Entity\Purchase;
 use App\Entity\User;
 use App\Exception\NotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -145,6 +146,14 @@ class BookRepository extends ServiceEntityRepository
         $book = $this->setPropertiesIfFound($request, $book, $inCreationTime);
 
         $this->_em->persist($book);
+        $this->_em->flush();
+
+        if ($request->get('quantity') !== null) {
+            $purchaseRepository = $this->_em->getRepository(Purchase::class);
+            $request->request->set('book', $book->getId());
+            $purchase = $purchaseRepository->findOneBy(['book' => $book->getId()]);
+            $purchaseRepository->writeFromRequest($request, $purchase);
+        }
 
         return $book;
     }
