@@ -13,6 +13,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class PurchaseController extends ApiController
 {
+    // getById
+    #[Route('/purchase/{id<\d+>}', name: 'get_purchase', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function getPurchaseById(int $id, PurchaseManagerService $purchaseManagerSE): Response
+    {
+        $purchase = $purchaseManagerSE->getPurchaseById($id);
+
+        return $this->response($purchase);
+    }
+
     // post 
     #[Route('/purchase',  name: 'create_purchase', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
