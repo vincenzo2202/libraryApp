@@ -49,7 +49,7 @@ class BookController extends ApiController
 
         $parameters = ['title', 'isSpecialEdition', 'status', 'author', 'publisher', 'categories'];
         $this->allNeededParametersPresent($request, $parameters);
-        $book = $bookManagerSE->create($request);
+        $bookManagerSE->create($request);
 
 
         return $this->respondWithSuccess('Se ha añadido el libro correctamente');

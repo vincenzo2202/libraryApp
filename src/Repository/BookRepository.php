@@ -108,13 +108,6 @@ class BookRepository extends ServiceEntityRepository
             $author = $authorRepository->findOrFail($request->get('author'));
             $book->setAuthor($author);
         }
-        // TODO: falta poner condición para que admin no añada id
-        // if ($request->get('user') !== null && $request->get('user') !== 2) {
-        if ($request->get('user') !== null) {
-            $userRepository = $this->_em->getRepository(User::class);
-            $user = $userRepository->findOrFail($request->get('user'));
-            $book->setUser($user);
-        }
 
         return $book;
     }
@@ -146,14 +139,6 @@ class BookRepository extends ServiceEntityRepository
         $book = $this->setPropertiesIfFound($request, $book, $inCreationTime);
 
         $this->_em->persist($book);
-        $this->_em->flush();
-
-        if ($request->get('quantity') !== null) {
-            $purchaseRepository = $this->_em->getRepository(Purchase::class);
-            $request->request->set('book', $book->getId());
-            $purchase = $purchaseRepository->findOneBy(['book' => $book->getId()]);
-            $purchaseRepository->writeFromRequest($request, $purchase);
-        }
 
         return $book;
     }

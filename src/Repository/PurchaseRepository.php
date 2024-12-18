@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\Magazine;
 use App\Entity\Purchase;
 use App\Entity\User;
 use App\Exception\NotFoundException;
@@ -53,14 +54,14 @@ class PurchaseRepository extends ServiceEntityRepository
             $user = $userRepository->findOrFail($request->get('user'));
             $purchase->setUser($user);
         }
-        if ($request->get('magazine') !== null) {
-            $magazineRepository = new MagazineRepository($this->registry);
-            $magazine = $magazineRepository->findOrFail($request->get('magazine'));
+        if ($request->get('type') === 'magazine') {
+            $magazineRepository = $this->_em->getRepository(Magazine::class);
+            $magazine = $magazineRepository->writeFromRequest($request);
             $purchase->setMagazine($magazine);
         }
-        if ($request->get('book') !== null) {
+        if ($request->get('type') === 'book') {
             $bookRepository = $this->_em->getRepository(Book::class);
-            $book = $bookRepository->findOrFail($request->get('book'));
+            $book = $bookRepository->writeFromRequest($request);
             $purchase->setBook($book);
         }
 
