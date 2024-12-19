@@ -67,6 +67,8 @@ Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo [LICENS
 
 ## Contacto
 
+Para contactar con Vincenzo Donnarumma :
+
 <a href = "mailto:vincenzodonnarumma22@gmail.com"  target="_blank">
 <img src="https://img.shields.io/badge/Gmail-C6362C?style=for-the-badge&logo=gmail&logoColor=white" target="_blank">
 </a>
