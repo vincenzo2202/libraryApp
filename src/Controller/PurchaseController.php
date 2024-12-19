@@ -52,4 +52,14 @@ class PurchaseController extends ApiController
 
         return $this->respondWithSuccess('Se ha añadido la compra correctamente');
     }
+
+    // put
+    #[Route('/purchase/{id<\d+>}', name: 'edit_purchase', methods: ['PUT'])]
+    #[IsGranted('ROLE_USER')]
+    public function editPurchase(int $id, Request $request, PurchaseManagerService $purchaseManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $purchaseManagerSE->edit($id, $request);
+        return $this->respondWithSuccess('Se ha editado la compra correctamente');
+    }
 }

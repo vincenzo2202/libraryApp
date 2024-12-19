@@ -43,7 +43,7 @@ class PurchaseRepository extends ServiceEntityRepository
         return $data;
     }
 
-    public function setPropertiesIfFound(Request $request, Purchase $purchase): Purchase
+    public function setPropertiesIfFound(Request $request, Purchase $purchase, $inCreationTime): Purchase
     {
         $request->get('quantity') === null ? '' : $purchase->setQuantity($request->get('quantity'));
         $request->get('purchasePrice') === null ? '' : $purchase->setPurchasePrice($request->get('purchasePrice'));
@@ -56,13 +56,23 @@ class PurchaseRepository extends ServiceEntityRepository
         }
         if ($request->get('type') === 'magazine') {
             $magazineRepository = $this->_em->getRepository(Magazine::class);
-            $magazine = $magazineRepository->writeFromRequest($request);
-            $purchase->setMagazine($magazine);
+            if ($inCreationTime === true) {
+                $magazine = $magazineRepository->writeFromRequest($request);
+                $purchase->setMagazine($magazine);
+            } else {
+                $magazine = $purchase->getMagazine();
+                $magazine = $magazineRepository->setPropertiesIfFound($request, $magazine);
+            }
         }
         if ($request->get('type') === 'book') {
             $bookRepository = $this->_em->getRepository(Book::class);
-            $book = $bookRepository->writeFromRequest($request);
-            $purchase->setBook($book);
+            if ($inCreationTime === true) {
+                $book = $bookRepository->writeFromRequest($request);
+                $purchase->setBook($book);
+            } else {
+                $book = $purchase->getBook();
+                $book = $bookRepository->setPropertiesIfFound($request, $book);
+            }
         }
 
         return $purchase;
@@ -84,6 +94,7 @@ class PurchaseRepository extends ServiceEntityRepository
     {
         $request = RepositoryUtilities::arrayToRequest($request);
 
+
         if ($entityToEdit instanceof Purchase) {
             $purchase = $entityToEdit;
             $inCreationTime = false;
@@ -91,7 +102,6 @@ class PurchaseRepository extends ServiceEntityRepository
             $purchase = new Purchase();
             $inCreationTime = true;
         }
-
         $purchase = $this->setPropertiesIfFound($request, $purchase, $inCreationTime);
 
         $this->_em->persist($purchase);

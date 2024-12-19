@@ -83,6 +83,12 @@ class PurchaseManagerService
     public function edit(int $id, $request): Purchase
     {
         $purchase = $this->purchaseRE->findOrFail($id);
+        if ($purchase->getBook() !== null) {
+            $request->request->add(['type' => 'book']);
+        } else {
+            $request->request->add(['type' => 'magazine']);
+        }
+
         $purchase = $this->purchaseRE->writeFromRequest($request, $purchase);
 
         try {
