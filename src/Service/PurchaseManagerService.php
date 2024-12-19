@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Entity\Book;
+use App\Entity\Magazine;
 use App\Entity\Purchase;
 use App\Exception\NotFoundException;
 use App\Repository\PurchaseRepository;
@@ -130,10 +132,31 @@ class PurchaseManagerService
         return $purchase;
     }
 
-    public function delete(int $id): void
+    public function delete(array $ids): void
     {
-        $purchase = $this->purchaseRE->findOrFail($id);
-        $this->purchaseRE->remove($purchase);
+        $toDelete = [];
+        $bookRepository = $this->em->getRepository(Book::class);
+        $magazineRepository = $this->em->getRepository(Magazine::class);
+
+
+        foreach ($ids as $id) {
+            $purchase = $this->purchaseRE->findOrFail($id);
+            if ($purchase->getUser() == null || $purchase->getUser()->getId() !== $this->tokenUserId()) {
+                continue;
+            }
+            $toDelete[] = $purchase;
+        }
+
+        foreach ($toDelete as $purchase) {
+            if ($purchase->getBook() !== null) {
+                $bookRepository->remove($purchase->getBook(), false);
+            } elseif ($purchase->getMagazine() !== null) {
+                $magazineRepository->remove($purchase->getMagazine(), false);
+            }
+            $this->purchaseRE->remove($purchase, false);
+        }
+
+        $this->em->flush();
     }
 
     public function tokenUserId(): int

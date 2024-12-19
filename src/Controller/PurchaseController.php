@@ -62,4 +62,21 @@ class PurchaseController extends ApiController
         $purchaseManagerSE->edit($id, $request);
         return $this->respondWithSuccess('Se ha editado la compra correctamente');
     }
+
+    // delete
+    #[Route('/purchase', name: 'delete_purchase', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deletePurchase(Request $request, PurchaseManagerService $purchaseManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $ids = $request->get('ids');
+
+        $purchaseManagerSE->delete($ids);
+
+        if (count($ids) === 1) {
+            return $this->respondWithSuccess('Se ha eliminado la compra correctamente');
+        }
+
+        return $this->respondWithSuccess('Se han eliminado las compras correctamente');
+    }
 }
