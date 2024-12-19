@@ -177,8 +177,6 @@ class PurchaseRepository extends ServiceEntityRepository
             ->andWhere('U.id = :userId')
             ->setParameter('userId', $request->get('user'));
 
-
-
         if ($genericFilter !== null) {
             $query
                 ->andWhere('P.quantity LIKE :genericFilter')
@@ -188,6 +186,21 @@ class PurchaseRepository extends ServiceEntityRepository
                 ->orWhere('B.title LIKE :genericFilter')
                 // añadir las que sean necesarias para la busqueda
                 ->setParameter('genericFilter', '%' . $genericFilter . '%');
+        }
+
+        // filtro por type
+        $type = $request->get('type');
+        if ($type === 'book') {
+            $query->andWhere('B.title IS NOT NULL');
+        } elseif ($type === 'magazine') {
+            $query->andWhere('M.title IS NOT NULL');
+        }
+
+        // filtro por status
+        $status = $request->get('status');
+        if ($status !== null) {
+            $query->andWhere('B.status = :status')
+                ->setParameter('status', $status);
         }
 
         $orderBy = strtoupper($orderBy);
