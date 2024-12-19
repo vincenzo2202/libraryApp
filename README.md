@@ -82,6 +82,7 @@ Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo [LICENS
 Quiero expresar mi más sincero agradecimiento a Antonio Corraliza por su invaluable apoyo y contribuciones al desarrollo de LibraryApp. Su experiencia y compromiso han sido clave para el éxito de este proyecto. Más allá de ser un maestro ejemplar en esta hermosa carrera, ha llegado a ocupar un lugar especial como amigo. 
 
 Para contactar con Antonio Corraliza:
+
 <a href="https://github.com/antoniocorraliza">
 <img src="https://img.shields.io/badge/github-24292F?style=for-the-badge&logo=github&logoColor=red" style="margin-right: 60px;" />
 </a>
