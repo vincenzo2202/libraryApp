@@ -58,6 +58,7 @@ class PurchaseController extends ApiController
     public function editPurchase(int $id, Request $request, PurchaseManagerService $purchaseManagerSE): Response
     {
         $request = $this->transformJsonBody($request);
+        $request = $this->tokenIdToRequest($request);
         $purchaseManagerSE->edit($id, $request);
         return $this->respondWithSuccess('Se ha editado la compra correctamente');
     }

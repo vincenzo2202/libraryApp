@@ -10,6 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Utilities\RepositoryUtilities;
 use App\Service\ImageUtilities;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 /**
  * @extends ServiceEntityRepository<Publisher>
@@ -81,14 +82,12 @@ class PublisherRepository extends ServiceEntityRepository
         $request = RepositoryUtilities::arrayToRequest($request);
 
         if ($entityToEdit instanceof Publisher) {
-
             $publisher = $entityToEdit;
             $inCreationTime = false;
         } else {
             $publisher = new Publisher();
             $inCreationTime = true;
         }
-
         $publisher = $this->setPropertiesIfFound($request, $publisher, $inCreationTime);
         $this->_em->persist($publisher);
 

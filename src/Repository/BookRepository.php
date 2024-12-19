@@ -77,36 +77,31 @@ class BookRepository extends ServiceEntityRepository
             $book->setStatus($status);
         }
 
-        if ($request->get('publisher') !== null && gettype($request->get('publisher')) ===  'object') {
-            // creo un nuevo publisher
-        } else if ($request->get('publisher') === null) {
-            '';
-        } else {
+        if ($request->get('publisher') !== null) {
             $publisherRepository = $this->_em->getRepository(Publisher::class);
             $publisher = $publisherRepository->findOrFail($request->get('publisher'));
-
             $book->setPublisher($publisher);
+        } else {
+            '';
         }
 
-        if ($request->get('categories') !== null && gettype($request->get('categories')) ===  'object') {
-            // creo un nuevo category
-        } else if ($request->get('categories') === null) {
-            '';
+        if ($request->get('categories') !== null && gettype($request->get('categories')) ===  'array') {
+            $book->removeAllCategories();
+            foreach ($request->get('categories') as $categoryId) {
+                $categoryRepository = $this->_em->getRepository(Category::class);
+                $category = $categoryRepository->findOrFail($categoryId);
+                $book->addCategory($category);
+            }
         } else {
-
-            $categoryRepository = $this->_em->getRepository(Category::class);
-            $category = $categoryRepository->findOrFail($request->get('categories'));
-            $book->addCategory($category);
+            '';
         }
 
-        if ($request->get('author') !== null && gettype($request->get('author')) ===  'object') {
-            // creo un nuevo author
-        } else if ($request->get('author') === null) {
-            '';
-        } else {
+        if ($request->get('author') !== null) {
             $authorRepository = $this->_em->getRepository(Author::class);
             $author = $authorRepository->findOrFail($request->get('author'));
             $book->setAuthor($author);
+        } else {
+            '';
         }
 
         return $book;

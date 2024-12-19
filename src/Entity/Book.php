@@ -210,6 +210,13 @@ class Book
         return $this;
     }
 
+    public function removeAllCategories(): static
+    {
+        $this->categories->clear();
+
+        return $this;
+    }
+
     public function getAuthor(): ?Author
     {
         return $this->author;

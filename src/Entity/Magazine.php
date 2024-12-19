@@ -225,6 +225,13 @@ class Magazine
         return $this;
     }
 
+    public function removeAllCategories(): static
+    {
+        $this->categories->clear();
+
+        return $this;
+    }
+
     // Getters and setters for $status
     public function getStatus(): Status
     {

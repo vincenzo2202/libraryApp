@@ -3,15 +3,14 @@
 namespace Utilities;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 
 class RepositoryUtilities
 {
     public static function arrayToRequest($request)
     {
         if (is_array($request)) {
-            $parameterBag = new ParameterBag();
-            $parameterBag->add($request);
-            $request = $parameterBag;
+            $request = new Request([], $request);
         }
 
         return $request;

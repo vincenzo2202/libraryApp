@@ -68,27 +68,20 @@ class MagazineRepository extends ServiceEntityRepository
             $magazine->setCoverImage($imagePath);
         }
 
-        if ($request->get('publisher') !== null && gettype($request->get('publisher')) ===  'object') {
-            // creo un nuevo publisher
-        } else if ($request->get('publisher') === null) {
-            '';
-        } else {
+        if ($request->get('publisher') !== null) {
             $publisherRepository = $this->_em->getRepository(Publisher::class);
             $publisher = $publisherRepository->findOrFail($request->get('publisher'));
-
             $magazine->setPublisher($publisher);
+        } else {
+            '';
         }
 
-        if (
-            $request->get('editorialLine') !== null && gettype($request->get('editorialLine')) ===  'object'
-        ) {
-            // creo un nuevo editorialLine
-        } else if ($request->get('editorialLine') === null) {
-            '';
-        } else {
+        if ($request->get('editorialLine') !== null) {
             $editorialLineRepository = $this->_em->getRepository(EditorialLine::class);
             $editorialLine = $editorialLineRepository->findOrFail($request->get('editorialLine'));
             $magazine->setEditorialLine($editorialLine);
+        } else {
+            '';
         }
 
         if ($request->get('status') !== null) {
@@ -100,15 +93,15 @@ class MagazineRepository extends ServiceEntityRepository
             $magazine->setStatus($status);
         }
 
-        if ($request->get('categories') !== null && gettype($request->get('categories')) ===  'object') {
-            // creo un nuevo category
-        } else if ($request->get('categories') === null) {
-            '';
+        if ($request->get('categories') !== null && gettype($request->get('categories')) ===  'array') {
+            $magazine->removeAllCategories();
+            foreach ($request->get('categories') as $categoryId) {
+                $categoryRepository = $this->_em->getRepository(Category::class);
+                $category = $categoryRepository->findOrFail($categoryId);
+                $magazine->addCategory($category);
+            }
         } else {
-
-            $categoryRepository = $this->_em->getRepository(Category::class);
-            $category = $categoryRepository->findOrFail($request->get('categories'));
-            $magazine->addCategory($category);
+            '';
         }
 
         return $magazine;
