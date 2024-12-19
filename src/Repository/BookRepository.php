@@ -155,11 +155,7 @@ class BookRepository extends ServiceEntityRepository
             ->leftJoin('A.categories', 'C')
             ->addSelect('C.id AS categoryId', 'C.name AS categoryName')
             ->leftJoin('A.author', 'Au')
-            ->addSelect('Au.id AS authorId', 'CONCAT(Au.name, \' \', Au.firstSurname, \' \', Au.secondSurname) AS authorName')
-            ->leftJoin('A.user', 'U')
-            ->andWhere('U.id = :userId')
-            ->setParameter('userId', $request->get('user'))
-            ->orWhere('A.user IS NULL');
+            ->addSelect('Au.id AS authorId', 'CONCAT(Au.name, \' \', Au.firstSurname, \' \', Au.secondSurname) AS authorName');
 
         if ($genericFilter) {
             $query->andWhere('(A.title LIKE :genericFilter OR A.isbn LIKE :genericFilter OR A.description LIKE :genericFilter OR A.publicationYear LIKE :genericFilter OR A.pages LIKE :genericFilter OR A.comment LIKE :genericFilter OR A.coverImage LIKE :genericFilter OR A.status  LIKE :genericFilter OR P.name LIKE :genericFilter OR C.name LIKE :genericFilter OR Au.name LIKE :genericFilter OR Au.firstSurname LIKE :genericFilter OR Au.secondSurname LIKE :genericFilter OR U.name LIKE :genericFilter OR U.firstSurname LIKE :genericFilter OR U.secondSurname LIKE :genericFilter)')

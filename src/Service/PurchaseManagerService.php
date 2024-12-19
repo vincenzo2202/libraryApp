@@ -94,6 +94,23 @@ class PurchaseManagerService
         return $purchase;
     }
 
+    public function getPurchasesList($request): array
+    {
+        [$total, $purchases] = $this->purchaseRE->list($request);
+
+        if ($purchases === []) {
+            return [
+                'total' => $total,
+                'data' => []
+            ];
+        }
+
+        return [
+            'total' => $total,
+            'data' => $purchases
+        ];
+    }
+
     public function create(Request $request): Purchase
     {
         $purchase = $this->purchaseRE->writeFromRequest($request);

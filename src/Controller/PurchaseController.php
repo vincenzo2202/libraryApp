@@ -23,6 +23,21 @@ class PurchaseController extends ApiController
         return $this->response($purchase);
     }
 
+    // getList
+    #[Route('/purchase', name: 'get_purchases', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function purchaseList(Request $request, PurchaseManagerService $purchaseManagerSE): Response
+    {
+        $request = $this->transformJsonBody($request);
+        $request = $this->tokenIdToRequest($request);
+
+        $this->checkIfHavePagination($request);
+
+        $purchases = $purchaseManagerSE->getPurchasesList($request);
+
+        return $this->response($purchases);
+    }
+
     // post 
     #[Route('/purchase',  name: 'create_purchase', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
