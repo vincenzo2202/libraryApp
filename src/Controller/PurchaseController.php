@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\PurchaseBusinessService;
 use App\Service\PurchaseManagerService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,19 @@ class PurchaseController extends ApiController
         $purchases = $purchaseManagerSE->getPurchasesList($request);
 
         return $this->response($purchases);
+    }
+
+    // GET PURCHASES BALANCE
+    #[Route('/purchase/statistics', name: 'get_purchases_statistics', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function getPurchasesStatistics(PurchaseBusinessService $purchaseBusinessSE): Response
+    {
+        // meter tokenUserId en el getPurchaseBalance
+        $userId = $this->getUser()->getId();
+
+        $balance = $purchaseBusinessSE->getPurchaseStatistics($userId);
+
+        return $this->response($balance);
     }
 
     // post 
