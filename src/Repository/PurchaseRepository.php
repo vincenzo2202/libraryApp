@@ -240,11 +240,52 @@ class PurchaseRepository extends ServiceEntityRepository
             return $item;
         }, $data);
 
-
-
-
-
         return $this->paginateQuery($data, $request);
+    }
+
+    public function purchaseStatistics($userId): array
+    {
+        $query = $this->createQueryBuilder('P')
+            ->select('SUM(P.purchasePrice) as balance')
+            ->andWhere('P.user = :userId')
+            // Añadir las magazines y books que se hayan comprado
+            ->leftJoin('P.magazine', 'M')
+            ->leftJoin('P.book', 'B')
+            ->andWhere('M.id IS NOT NULL OR B.id IS NOT NULL')
+            // Calcular el balance de magazines y books
+            ->addSelect(
+                'COALESCE(SUM(CASE WHEN M.id IS NOT NULL THEN P.purchasePrice ELSE 0 END), 0) as magazineBalance',
+                'COALESCE(SUM(CASE WHEN B.id IS NOT NULL THEN P.purchasePrice ELSE 0 END), 0) as bookBalance',
+                'SUM(CASE WHEN M.status = \'available\' THEN 1 ELSE 0 END) as totalAvailableMagazines',
+                'SUM(CASE WHEN B.status = \'available\' THEN 1 ELSE 0 END) as totalAvailableBooks',
+                'SUM(CASE WHEN M.status = \'borrowed\' THEN 1 ELSE 0 END) as totalBorrowedMagazines',
+                'SUM(CASE WHEN B.status = \'borrowed\' THEN 1 ELSE 0 END) as totalBorrowedBooks'
+            )
+            ->groupBy('P.user')
+            ->setParameter('userId', $userId)
+            ->getQuery();
+
+        $data = $query->getResult();
+
+        $data = $query->getResult();
+
+        $data = array_map(function ($item) {
+            return [
+                'balance' => $item['balance'],
+                'magazineBalance' => $item['magazineBalance'],
+                'bookBalance' => $item['bookBalance'],
+                'totalAvailable' => [
+                    'books' => $item['totalAvailableBooks'],
+                    'magazines' => $item['totalAvailableMagazines']
+                ],
+                'totalBorrowed' => [
+                    'books' => $item['totalBorrowedBooks'],
+                    'magazines' => $item['totalBorrowedMagazines']
+                ]
+            ];
+        }, $data);
+
+        return $data;
     }
 
     private function paginateQuery($data, $request)
