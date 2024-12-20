@@ -52,7 +52,12 @@ Con LibraryApp, gestionar tu biblioteca nunca ha sido tan sencillo y satisfactor
     ```bash
     symfony server:start
     ``` 
+## Endpoints
+.
+https://www.postman.com/telecoms-meteorologist-95304418/libraryapp/collection/b3apy24/library-app
 
+<div><a href="https://www.postman.com/telecoms-meteorologist-95304418/libraryapp/collection/b3apy24/library-app">POSTMAN</a></div>
+<div><a href="https://www.postman.com/telecoms-meteorologist-95304418/libraryapp/collection/b3apy24/library-app">https://www.postman.com/telecoms-meteorologist-95304418/libraryapp/collection/b3apy24/library-app</a></div>
 ## Contribuir
 
 1. Haz un fork del proyecto
