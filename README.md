@@ -6,6 +6,13 @@ La idea surgió de una necesidad real planteada por un amigo y colega apasionado
 
 Con LibraryApp, gestionar tu biblioteca nunca ha sido tan sencillo y satisfactorio. Es más que una herramienta, es el aliado perfecto para los amantes de los libros y las revistas.
 
+## Diagrama
+
+<div style="text-align: center;">
+    <img src="./public/uploads/images/diagrama.png" style="width: 800;" />
+</div>
+ 
+
 ## Características
 
 - Buscar libros y Revistas por título, autor o ISBN
